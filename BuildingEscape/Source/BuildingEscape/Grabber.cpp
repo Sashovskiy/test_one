@@ -23,6 +23,18 @@ void UGrabber::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("Grabbe reporting for duty!"));
 	
+
+	/// Look for attached Physics Handle
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (PhysicsHandle)
+	{
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s missing handle component"), *GetOwner()->GetName());
+	}
+
 }
 
 
@@ -31,14 +43,14 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	// Get player view point this tick
+	/// Get player view point this tick
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
 		OUT PlayerViewPointLocation,
 		OUT PlayerViewPointRotation
 		 );
-		// TODO Log out to test
+		/// TODO Log out to test
 		/*UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"),
 			*PlayerViewPointLocation.ToString(),
 			*PlayerViewPointRotation.ToString()
@@ -46,7 +58,7 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 
 	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
 
-	//Draw  a red trace in to world visualise
+	///Draw  a red trace in to world visualise
 	DrawDebugLine(
 		GetWorld(),
 		PlayerViewPointLocation,
@@ -58,10 +70,10 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 		10.f
 		);
 
-	//Setup query parameters
+	// Setup query parameters
 	FCollisionQueryParams TraceParameters(FName(""), false, GetOwner());
 
-	// Ray-cast out to reach distance
+	/// Ray-cast out to reach distance
 	FHitResult Hit;
 	
 	GetWorld()->LineTraceSingleByObjectType(
@@ -72,7 +84,7 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 		TraceParameters
 		);
 
-	// See what what we hit
+	/// See what what we hit
 	AActor* ActorHit = Hit.GetActor();
 
 	if (ActorHit) 
